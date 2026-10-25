@@ -117,7 +117,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="本项目" Margin="0,0,25,0" Opacity="0.7" />
-                        <TextBlock Grid.Column="1" VerticalAlignment="Center" x:Name="LabAboutRepo" Text="此精简版由本地改造生成，不对外发布。"
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" x:Name="LabAboutRepo" Text="源码与更新发布于 GitHub。"
                                    Opacity="0.55" TextWrapping="Wrap" />
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="0,16,0,0">

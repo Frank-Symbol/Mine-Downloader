@@ -267,7 +267,7 @@ Public Module ModLanguage
         Add("打开原项目主页", "開啟原專案主頁", "Open upstream page", "オリジナルのページを開く")
         Add("查看开源协议", "檢視開源協議", "View license", "ライセンスを見る")
         Add("一款专注于 Minecraft 资源下载的启动器，基于 PCL 开源项目改造。", "一款專注於 Minecraft 資源下載的啟動器，基於 PCL 開源專案改造。", "A launcher focused on downloading Minecraft resources, adapted from the open-source PCL project.", "Minecraft リソースのダウンロードに特化した、オープンソースの PCL をベースにしたランチャーです。")
-        Add("此精简版由本地改造生成，不对外发布。", "此精簡版由本機修改產生，不對外發佈。", "This locally customized lightweight edition is not publicly distributed.", "この軽量版はローカルで改造したもので、一般公開していません。")
+        Add("源码与更新发布于 GitHub。", "原始碼與更新發佈於 GitHub。", "Source code and updates are published on GitHub.", "ソースコードと更新は GitHub で公開しています。")
         Add("标题显示译名，详情显示文件名", "標題顯示譯名，詳情顯示檔名", "Translated title, file name in details", "タイトルに翻訳名、詳細にファイル名を表示")
         Add("标题显示文件名，详情显示译名", "標題顯示檔名，詳情顯示譯名", "File name as title, translated name in details", "タイトルにファイル名、詳細に翻訳名を表示")
         Add("初始化本页设置", "初始化本頁設定", "Reset this page's settings", "このページの設定を初期化")

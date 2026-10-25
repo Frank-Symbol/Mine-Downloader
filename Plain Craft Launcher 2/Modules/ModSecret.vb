@@ -74,7 +74,18 @@ Friend Module ModSecret
     Public ColorSemiTransparent As New MyColor(1, Color8)
 
     Public ThemeNow As Integer = -1
-    Public ColorHue As Integer = 210, ColorSat As Integer = 85, ColorLightAdjust As Integer = 0, ColorHueTopbarDelta As OneOf(Of Integer, Integer()) = 0
+    Public ColorHue As Double = 210
+    Public ColorSat As Integer = 85, ColorLightAdjust As Integer = 0, ColorHueTopbarDelta As OneOf(Of Integer, Integer()) = 0
+    Private ReadOnly RainbowClock As System.Diagnostics.Stopwatch = System.Diagnostics.Stopwatch.StartNew()
+
+    ''' <summary>
+    ''' 滑稽彩的连续色相：单调经过时间（毫秒），每 120 秒旋转一圈。
+    ''' 纯函数，保留小数色相以避免刷新时出现整度量化；不依赖系统日期时间。
+    ''' </summary>
+    Friend Function HueAt(ElapsedMilliseconds As Double) As Double
+        Const PeriodMilliseconds As Double = 120000.0
+        Return ((ElapsedMilliseconds Mod PeriodMilliseconds + PeriodMilliseconds) Mod PeriodMilliseconds) * 360.0 / PeriodMilliseconds
+    End Function
     Public ThemeDontClick As Integer = 0
 
     ''' <summary>
@@ -117,7 +128,7 @@ Friend Module ModSecret
                 ColorSat = T.Sat
                 ColorLightAdjust = T.Light
                 ColorHueTopbarDelta = T.Delta
-                ColorHue = CInt((Now.Millisecond \ 8 + Now.Second * 45 + Now.Minute * 13) Mod 360)
+                ColorHue = HueAt(RainbowClock.Elapsed.TotalMilliseconds)
             End If
 
             Color1 = New MyColor().FromHSL2(ColorHue, ColorSat * 0.2, 25 + ColorLightAdjust * 0.3)
