@@ -1,0 +1,172 @@
+<local:MyPageRight
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PCL" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d" x:Class="PageSetupSystem"
+    PanScroll="PanBack">
+    <local:MyScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" x:Name="PanBack">
+        <StackPanel x:Name="PanMain" Margin="25,10">
+            <local:MyCard Margin="0,15" Title="下载">
+                <StackPanel Margin="25,37,25,15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28" />
+                            <RowDefinition Height="7" />
+                            <RowDefinition Height="28" />
+                            <RowDefinition Height="7" />
+                            <RowDefinition Height="27" />
+                            <RowDefinition Height="27" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="文件下载源" Margin="0,0,25,0" />
+                        <local:MyComboBox x:Name="ComboDownloadSource" Grid.ColumnSpan="2" local:SettingService.Key="ToolDownloadSource" Grid.Column="1">
+                            <local:MyComboBoxItem Content="尽量使用镜像源" />
+                            <local:MyComboBoxItem Content="优先使用官方源，在加载缓慢时换用镜像源" IsSelected="True" />
+                            <local:MyComboBoxItem Content="尽量使用官方源" />
+                        </local:MyComboBox>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="版本列表源" Margin="0,0,25,0" Grid.Row="2" />
+                        <local:MyComboBox x:Name="ComboDownloadVersion" Grid.ColumnSpan="2" local:SettingService.Key="ToolDownloadVersion" Grid.Column="1" Grid.Row="2">
+                            <local:MyComboBoxItem Content="尽量使用镜像源（可能缺少刚刚更新的版本）" />
+                            <local:MyComboBoxItem Content="优先使用官方源，在加载缓慢时换用镜像源" IsSelected="True" />
+                            <local:MyComboBoxItem Content="尽量使用官方源" />
+                        </local:MyComboBox>
+                        <TextBlock Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Text="最大线程数" Margin="0,0,25,0" />
+                        <local:MySlider x:Name="SliderDownloadThread" Grid.Row="4" local:SettingService.Key="ToolDownloadThread" MaxValue="255" Value="63" Grid.Column="1"
+                                        ToolTip="线程数越多，限速的文件下载越快，但过高的线程数会造成下载时非常严重的卡顿。&#xa;一般而言，64 线程已可以保证足够的下载速度。" />
+                        <TextBlock VerticalAlignment="Center" Grid.Row="5" HorizontalAlignment="Left" Text="速度限制" Margin="0,0,25,0" />
+                        <local:MySlider x:Name="SliderDownloadSpeed" Grid.Row="5" local:SettingService.Key="ToolDownloadSpeed" MaxValue="42" Value="42" Grid.Column="1"
+                                        ToolTip="设置下载的速度上限，以避免在下载时导致其他需要联网的程序卡死" />
+                        <TextBlock VerticalAlignment="Center" Grid.Row="6" HorizontalAlignment="Left" Text="游戏文件夹" Margin="0,5,25,5"
+                                   ToolTip="即 .minecraft 文件夹，下载的版本、Mod、资源包、光影包都会放进这里" />
+                        <StackPanel Grid.Row="6" Grid.Column="1" Margin="0,5">
+                            <TextBlock x:Name="LabFolderPath" TextWrapping="Wrap" FontSize="12" Opacity="0.7" Margin="0,0,0,7" />
+                            <WrapPanel>
+                                <local:MyButton x:Name="BtnFolderBrowse" Text="更改…" MinWidth="140" Height="35" Padding="13,0" Margin="0,0,20,7" />
+                                <local:MyButton x:Name="BtnFolderOpen" Text="打开文件夹" MinWidth="140" Height="35" Padding="13,0" Margin="0,0,20,7" />
+                                <local:MyButton x:Name="BtnFolderReset" Text="恢复默认" MinWidth="140" Height="35" Padding="13,0" Margin="0,0,0,7" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </local:MyCard>
+            <local:MyCard Margin="0,0,0,15" Title="社区资源">
+                <StackPanel Margin="25,37,25,12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28" />
+                            <RowDefinition Height="7" />
+                            <RowDefinition Height="28" />
+                            <RowDefinition Height="7" />
+                            <RowDefinition Height="28" />
+                            <RowDefinition Height="7" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="来源" Margin="0,0,25,0" />
+                        <local:MyComboBox x:Name="ComboDownloadMod" Grid.Row="0" Grid.ColumnSpan="2" local:SettingService.Key="ToolDownloadMod" Grid.Column="1">
+                            <local:MyComboBoxItem Content="尽量使用镜像源（可能缺少刚刚更新的版本）" />
+                            <local:MyComboBoxItem Content="仅在官方源加载缓慢时改用镜像源" />
+                            <local:MyComboBoxItem Content="尽量使用官方源" IsSelected="True" />
+                        </local:MyComboBox>
+                        <TextBlock Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Text="文件名格式" Margin="0,0,25,0" />
+                        <local:MyComboBox Grid.Row="2" x:Name="ComboDownloadTranslateV2" Grid.ColumnSpan="2" local:SettingService.Key="ToolDownloadTranslateV2" Grid.Column="1" 
+                                          ToolTip="下载社区资源时，其默认文件名的格式">
+                            <local:MyComboBoxItem Content="【机械动力】create-1.21.1-6.0.4" />
+                            <local:MyComboBoxItem Content="[机械动力] create-1.21.1-6.0.4" IsSelected="True" />
+                            <local:MyComboBoxItem Content="机械动力-create-1.21.1-6.0.4" />
+                            <local:MyComboBoxItem Content="create-1.21.1-6.0.4-机械动力" />
+                            <local:MyComboBoxItem Content="create-1.21.1-6.0.4" />
+                        </local:MyComboBox>
+                        <TextBlock Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Mod 管理样式" Margin="0,0,25,0" />
+                        <local:MyComboBox Grid.Row="4" x:Name="ComboModLocalNameStyle" Grid.ColumnSpan="2" local:SettingService.Key="ToolModLocalNameStyle" Grid.Column="1" 
+                                          ToolTip="在 Mod 管理页面中，Mod 项的显示方式">
+                            <local:MyComboBoxItem Content="标题显示译名，详情显示文件名" IsSelected="True" />
+                            <local:MyComboBoxItem Content="标题显示文件名，详情显示译名" />
+                        </local:MyComboBox>
+                    </Grid>
+                </StackPanel>
+            </local:MyCard>
+            <local:MyCard Margin="0,0,0,15" Title="关于">
+                <StackPanel Margin="25,37,25,18">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock x:Name="LabAboutName" FontSize="17" FontWeight="SemiBold" Text="Mine Downloader" />
+                        <TextBlock x:Name="LabAboutVersion" Margin="12,4,0,0" FontSize="12" Opacity="0.5" VerticalAlignment="Bottom" />
+                    </StackPanel>
+                    <TextBlock x:Name="LabAboutDesc" TextWrapping="Wrap" FontSize="12.5" Opacity="0.65"
+                               Text="一款专注于 Minecraft 资源下载的启动器，基于 PCL 开源项目改造。" />
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="原项目" Margin="0,0,25,0" Opacity="0.7" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" x:Name="LabAboutUpstream" Text="Plain Craft Launcher（Meloong-Git/PCL）"
+                                   Foreground="{DynamicResource ColorBrush3}" Cursor="Hand"
+                                   local:CustomEventService.EventType="打开网页" local:CustomEventService.EventData="https://github.com/Meloong-Git/PCL" />
+                    </Grid>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="本项目" Margin="0,0,25,0" Opacity="0.7" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" x:Name="LabAboutRepo" Text="此精简版由本地改造生成，不对外发布。"
+                                   Opacity="0.55" TextWrapping="Wrap" />
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                        <local:MyButton x:Name="BtnAboutUpstream" Text="打开原项目主页" MinWidth="150" Height="35" Padding="13,0" Margin="0,0,10,0" ColorType="Highlight" />
+                        <local:MyButton x:Name="BtnAboutLicense" Text="查看开源协议" MinWidth="140" Height="35" Padding="13,0" />
+                    </StackPanel>
+                </StackPanel>
+            </local:MyCard>
+            <local:MyCard Margin="0,0,0,15" Title="辅助功能">
+                <StackPanel Margin="25,40,25,17">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="160" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="22" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="22" />
+                        </Grid.RowDefinitions>
+                        <TextBlock VerticalAlignment="Center" Grid.Row="2" HorizontalAlignment="Left" Text="游戏语言" Margin="0,0,25,0" />
+                        <local:MyCheckBox Text="自动设置为中文" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="5" x:Name="CheckHelpChinese" local:SettingService.Key="ToolHelpChinese" />
+                    </Grid>
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </StackPanel>
+            </local:MyCard>
+
+            <!-- <local:MyCard x:Name="CardMain" Margin="0,15" Title="全局设置">
+                <StackPanel Margin="25,40,25,15">
+                    <Grid x:Name="PanMainLang" Height="28" Margin="0,0,0,10" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="语言" Margin="0,0,25,0" />
+                        <local:MyComboBox x:Name="ComboBackgroundSuit" Tag="UiBackgroundSuit" HorizontalAlignment="Left" Width="170" Grid.Column="1">
+                            <local:MyComboBoxItem Content="简体中文" Tag="zh_CN" IsSelected="True" />
+                            <local:MyComboBoxItem Content="繁體中文" Tag="zh_HK" />
+                            <local:MyComboBoxItem Content="English" Tag="en_US" />
+                        </local:MyComboBox>
+                    </Grid>
+                </StackPanel>
+            </local:MyCard> -->
+        </StackPanel>
+    </local:MyScrollViewer>
+</local:MyPageRight>
