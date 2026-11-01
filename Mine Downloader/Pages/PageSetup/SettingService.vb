@@ -1,4 +1,4 @@
-﻿Public Class SettingService
+Public Class SettingService
 
 #Region "属性"
 
@@ -33,11 +33,15 @@
     ''' <summary>
     ''' 重置该控件以及它所有的子控件的设置值。
     ''' </summary>
+    Private Shared Function GetSettingInstance(Key As String) As McInstance
+        Return If(Key.StartsWith("Version", StringComparison.Ordinal), PageInstanceLeft.Instance, Nothing)
+    End Function
+
     Public Shared Sub ResetSettings(Target As DependencyObject)
         LogicalTreeHelper.GetChildren(Target).OfType(Of DependencyObject)().ForAll(Sub(c) ResetSettings(c)) '处理子控件
         Dim Key = GetKey(Target)
         If Key Is Nothing Then Return
-        Settings.Reset(Key, Instance:=Nothing)
+        Settings.Reset(Key, Instance:=GetSettingInstance(Key))
     End Sub
 
     ''' <summary>
@@ -47,7 +51,7 @@
         LogicalTreeHelper.GetChildren(Target).OfType(Of DependencyObject)().ForAll(Sub(c) RefreshSettings(c)) '处理子控件
         Dim Key = GetKey(Target)
         If Key Is Nothing Then Return
-        Dim NewValue = Settings.Get(Key, Instance:=Nothing)
+        Dim NewValue = Settings.Get(Key, Instance:=GetSettingInstance(Key))
         If TypeOf Target Is ISettingControl Then DirectCast(Target, ISettingControl).RefreshSetting(NewValue)
     End Sub
 
@@ -61,7 +65,9 @@
         If Key Is Nothing Then Return
         Dim NewValue As String = DirectCast(sender, ISettingControl).GetCurrentSetting()
         If NewValue Is Nothing Then Return
-        Settings.Set(Key, NewValue, Instance:=Nothing)
+        Settings.Set(Key, NewValue, Instance:=GetSettingInstance(Key))
+        If Key = "VersionRamType" Then PageInstanceSetup.OnVersionRamTypeChanged(Integer.Parse(NewValue))
+        If Key = "VersionArgumentJavaV2" OrElse Key = "VersionArgumentJavaRange" Then PageInstanceLeft.ReloadCurrentJava()
     End Sub
 
 End Class

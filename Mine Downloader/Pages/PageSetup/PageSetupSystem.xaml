@@ -46,9 +46,9 @@
                         <StackPanel Grid.Row="6" Grid.Column="1" Margin="0,5">
                             <TextBlock x:Name="LabFolderPath" TextWrapping="Wrap" FontSize="12" Opacity="0.7" Margin="0,0,0,7" />
                             <WrapPanel>
-                                <local:MyButton x:Name="BtnFolderBrowse" Text="更改…" MinWidth="140" Height="35" Padding="13,0" Margin="0,0,20,7" />
+                                <local:MyButton x:Name="BtnFolderBrowse" Text="选择文件夹…" MinWidth="140" Height="35" Padding="13,0" Margin="0,0,20,7" />
                                 <local:MyButton x:Name="BtnFolderOpen" Text="打开文件夹" MinWidth="140" Height="35" Padding="13,0" Margin="0,0,20,7" />
-                                <local:MyButton x:Name="BtnFolderReset" Text="恢复默认" MinWidth="140" Height="35" Padding="13,0" Margin="0,0,0,7" />
+                                <local:MyButton x:Name="BtnFolderReset" Text="自动跟随 PCL" MinWidth="140" Height="35" Padding="13,0" Margin="0,0,0,7" />
                             </WrapPanel>
                         </StackPanel>
                     </Grid>

@@ -184,8 +184,6 @@ Public Module ModLanguage
         Add("背景图片（{0} 张）", "背景圖片（{0} 張）", "Background images ({0})", "背景画像（{0} 枚）")
         Add("{0}（已手动指定）", "{0}（已手動指定）", "{0} (manually selected)", "{0}（手動指定）")
         Add("{0}（自动识别：与启动器同目录的 .minecraft 文件夹）", "{0}（自動識別：與啟動器同目錄的 .minecraft 資料夾）", "{0} (auto-detected: .minecraft folder beside the launcher)", "{0}（自動検出：ランチャーと同じディレクトリの .minecraft フォルダー）")
-        Add("已恢复默认主题：跳票红", "已恢復預設主題：跳票紅", "Default theme restored: Delayed Red", "デフォルトテーマに戻しました：延期レッド")
-        Add("所有主题已解锁，再次右键版本号恢复默认", "所有主題已解鎖，再次右鍵版本號恢復預設", "All themes unlocked. Right-click the version number again to restore the default.", "すべてのテーマを解除しました。バージョン番号をもう一度右クリックすると元に戻ります。")
         Add("最新正式版，发布于 {0}", "最新正式版，發佈於 {0}", "Latest release, released on {0}", "最新リリース、公開日：{0}")
         Add("最新预览版，发布于 {0}", "最新預覽版，發佈於 {0}", "Latest snapshot, released on {0}", "最新プレビュー、公開日：{0}")
         Add("发布于 {0}", "發佈於 {0}", "Released on {0}", "公開日：{0}")

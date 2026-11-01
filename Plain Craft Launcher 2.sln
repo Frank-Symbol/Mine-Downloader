@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Plain Craft Launcher 2", "Plain Craft Launcher 2\Plain Craft Launcher 2.vbproj", "{4499F2D2-18EF-4238-B1F0-7BD547AFF925}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Plain Craft Launcher 2", "Mine Downloader\Plain Craft Launcher 2.vbproj", "{4499F2D2-18EF-4238-B1F0-7BD547AFF925}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCLCS", "PCLCS\PCLCS.csproj", "{32DE4AAF-F4D6-42C5-9604-19236DE96C69}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCLCS", "MDCS\PCLCS.csproj", "{32DE4AAF-F4D6-42C5-9604-19236DE96C69}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeloongCore", "MeloongCore\Shared\MeloongCore.csproj", "{D22BBF3C-2177-0208-4E29-8466AA41AC6F}"
 EndProject

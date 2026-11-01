@@ -88,6 +88,7 @@ Public Class Settings
         New Setting("LaunchFolderSelect", ""),
         New Setting("UiLanguage", 1, OnChanged:=Sub() LanguageApplyAll()),
         New Setting("UiLanguageInited", False),
+        New Setting("MdFolderPresets", "[]"),
         New Setting("McFolder", ""), '游戏文件夹（.minecraft）的显式指定，留空则自动识别
         New Setting("LaunchFolders", "", Source:=Sources.Registry),
         New Setting("LaunchArgumentTitle", ""),
@@ -135,8 +136,7 @@ Public Class Settings
         New Setting("UiLauncherSat", 80),
         New Setting("UiLauncherDelta", 90),
         New Setting("UiLauncherLight", 20),
-        New Setting("UiLauncherTheme", 10, OnChanged:=AddressOf ThemeRefresh),
-        New Setting("MdThemesUnlocked", False),
+        New Setting("UiLauncherTheme", 0, OnChanged:=AddressOf ThemeRefresh),
         New Setting("UiLauncherThemeHide", "0|1|2|3|4", Source:=Sources.Registry, Encrypted:=True),
         New Setting("UiLauncherThemeHide2", "0|1|2|3|4", Source:=Sources.Registry, Encrypted:=True),
         New Setting("UiLauncherLogo", True),

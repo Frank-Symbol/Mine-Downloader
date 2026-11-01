@@ -16,7 +16,11 @@ Public Module ModMinecraft
         Get
             If _McFolderSelected Is Nothing Then
                 '不能使用 McFolderSelected 触发 Set，这会被视为为 Get 设置返回值
-                Dim ConfigValue As String = Settings.Get(Of String)("LaunchFolderSelect")
+                Dim ConfigValue As String = Settings.Get(Of String)("McFolder")
+                If String.IsNullOrWhiteSpace(ConfigValue) Then
+                    IniClearCache(Paths.Base & "PCL\Setup.ini")
+                    ConfigValue = ReadIni(Paths.Base & "PCL\Setup.ini", "LaunchFolderSelect", "")
+                End If
                 If String.IsNullOrWhiteSpace(ConfigValue) Then ConfigValue = "$.minecraft"
                 SetMcFolder(ConfigValue)
             End If
@@ -67,8 +71,8 @@ Public Module ModMinecraft
     ''' <summary>
     ''' 加载 Minecraft 文件夹列表。
     ''' MD 自有配置优先，兼容沿用 PCL 本体所选择的文件夹与版本：
-    ''' 1. MD\Setup.ini 中的 McFolder、LaunchFolderSelect；
-    ''' 2. 只读 PCL\Setup.ini 中的 McFolder、LaunchFolderSelect；
+    ''' 1. MD\Setup.ini 中显式指定的 McFolder；
+    ''' 2. 只读 PCL\Setup.ini 中的 LaunchFolderSelect（每次重新读取）；
     ''' 3. PCL 本体的 LaunchFolders（注册表）以及同级目录扫描；
     ''' 4. 都不存在时回退到软件所在目录下的 .minecraft 文件夹。
     ''' 逐个验证写入权限，取第一个可用的。
@@ -102,15 +106,17 @@ Public Module ModMinecraft
                 CacheMcFolderList.Add(New McFolder With {.Name = ".minecraft", .Location = AutoFolder, .Type = McFolder.Types.Vanilla})
             End If
 
+            'PCL 是启动器配置目录，不作为 Minecraft 游戏目录导入。
+            CacheMcFolderList.RemoveAll(Function(f) IsPclConfigFolder(f.Location))
+
             '挑选可用文件夹：显式配置 > PCL 本体的选择 > 已装版本的文件夹 > 兜底
             Dim Candidates As New List(Of String)
             '先尝试 MD 自有设置，再显式只读旧 PCL 配置；不通过旧路径写回。
             Dim ConfiguredFolder As String = ReadIni("Setup", "McFolder", "")
-            Dim MdSelected As String = ReadIni("Setup", "LaunchFolderSelect", "")
-            Dim PclConfigured As String = ReadIni(Paths.Base & "PCL\Setup.ini", "McFolder", "")
+            IniClearCache(Paths.Base & "PCL\Setup.ini")
             Dim PclSelected As String = ReadIni(Paths.Base & "PCL\Setup.ini", "LaunchFolderSelect", "")
-            For Each SavedFolder In {ConfiguredFolder, MdSelected, PclConfigured, PclSelected}
-                If String.IsNullOrWhiteSpace(SavedFolder) Then Continue For
+            For Each SavedFolder In {ConfiguredFolder, PclSelected}
+                If String.IsNullOrWhiteSpace(SavedFolder) OrElse IsPclConfigFolder(SavedFolder.Replace("$", Paths.Base)) Then Continue For
                 Dim Candidate = PathUtils.AddSlashSuffix(PathUtils.ForCompare(SavedFolder.Replace("$", Paths.Base)))
                 If Not Candidates.Any(Function(f) PathUtils.IsSame(f, Candidate)) Then Candidates.Add(Candidate)
             Next
@@ -143,10 +149,20 @@ Public Module ModMinecraft
             End If
             Logger.Info($"当前使用版本安装路径：{SelectedFolder}")
 
-            For Each Folder As McFolder In CacheMcFolderList
-                McFolderLauncherProfilesJsonCreate(Folder.Location)
+            For Each Preset In McFolderPresetLoad()
+                If IsPclConfigFolder(Preset.Value) Then Continue For
+                Dim Existing = CacheMcFolderList.FirstOrDefault(Function(f) PathUtils.IsSame(f.Location, Preset.Value))
+                If Existing Is Nothing Then
+                    CacheMcFolderList.Add(New McFolder With {.Name = Preset.Key, .Location = Preset.Value, .Type = McFolder.Types.Custom})
+                Else
+                    Existing.Name = Preset.Key
+                End If
             Next
-            If Settings.Get(Of Boolean)("SystemDebugDelay") Then Thread.Sleep(RandomInteger(200, 2000))
+            If Not CacheMcFolderList.Any(Function(f) PathUtils.IsSame(f.Location, SelectedFolder)) Then
+                CacheMcFolderList.Add(New McFolder With {.Name = "当前选择", .Location = SelectedFolder, .Type = McFolder.Types.Custom})
+            End If
+            McFolderLauncherProfilesJsonCreate(SelectedFolder)
+            '下载器不启用旧启动器的调试随机延时。
 
             '回设
             McFolderList = CacheMcFolderList
@@ -166,6 +182,73 @@ Public Module ModMinecraft
     ''' 读取 PCL 本体记录的 Minecraft 文件夹列表（名称 → 路径）。
     ''' 不同分支的注册表键名可能不同，这里按顺序尝试；读取失败时返回空列表。
     ''' </summary>
+    Public Function McFolderPresetLoad() As List(Of KeyValuePair(Of String, String))
+        Dim Result As New List(Of KeyValuePair(Of String, String))
+        Try
+            For Each Entry As JObject In JArray.Parse(Settings.Get(Of String)("MdFolderPresets"))
+                Dim Folder As String = PathUtils.AddSlashSuffix(CStr(Entry("path")).Replace("$", Paths.Base))
+                Result.Add(New KeyValuePair(Of String, String)(CStr(Entry("name")), Folder))
+            Next
+        Catch ex As Exception
+            Logger.Warn(ex, "读取文件夹预设失败")
+        End Try
+        Return Result
+    End Function
+
+    Private Sub McFolderPresetWrite(Entries As List(Of KeyValuePair(Of String, String)))
+        Dim Data As New JArray
+        For Each Entry In Entries
+            Data.Add(New JObject(New JProperty("name", Entry.Key), New JProperty("path", Entry.Value)))
+        Next
+        Settings.Set("MdFolderPresets", Data.ToString(Newtonsoft.Json.Formatting.None))
+    End Sub
+
+    Public Sub McFolderPresetSave(Name As String, Folder As String)
+        Folder = PathUtils.AddSlashSuffix(Path.GetFullPath(Folder))
+        If String.IsNullOrWhiteSpace(Name) Then Throw New ArgumentException("请输入预设名称")
+        DirectoryUtils.Create(Folder)
+        CheckPermissionWithException(Folder)
+        Dim Entries = McFolderPresetLoad()
+        Entries.RemoveAll(Function(e) PathUtils.IsSame(e.Value, Folder))
+        Entries.Add(New KeyValuePair(Of String, String)(Name.Trim(), Folder))
+        McFolderPresetWrite(Entries)
+    End Sub
+
+    Public Sub McFolderPresetRemove(Folder As String)
+        Dim Entries = McFolderPresetLoad()
+        Entries.RemoveAll(Function(e) PathUtils.IsSame(e.Value, Folder))
+        McFolderPresetWrite(Entries)
+    End Sub
+
+    Public Sub McFolderUsePreset(Folder As String)
+        Folder = PathUtils.AddSlashSuffix(Path.GetFullPath(Folder))
+        DirectoryUtils.Create(Folder & "versions\")
+        CheckPermissionWithException(Folder)
+        Settings.Set("McFolder", Folder)
+        McFolderSelected = Folder
+        McInstanceListLoader.Start(Folder)
+    End Sub
+
+    Public Sub McFolderFollowPcl()
+        Settings.Set("McFolder", "")
+        McFolderListLoadSub()
+    End Sub
+
+    Public Function McFolderRefreshChoices(Optional Reload As Boolean = True) As List(Of McFolder)
+        If Reload Then
+            McFolderListLoader.Start(IsForceRestart:=True)
+        ElseIf McFolderList.Count = 0 Then
+            McFolderListLoader.Start(0)
+        End If
+        Return McFolderList.ToList()
+    End Function
+
+    Private Function IsPclConfigFolder(Folder As String) As Boolean
+        If String.IsNullOrWhiteSpace(Folder) Then Return False
+        Return PathUtils.IsSame(Folder, Paths.Base & "PCL\") OrElse
+            String.Equals(Path.GetFileName(Folder.TrimEnd("\"c, "/"c)), "PCL", StringComparison.OrdinalIgnoreCase)
+    End Function
+
     Private Function McFolderReadSetupList() As List(Of KeyValuePair(Of String, String))
         Dim Result As New List(Of KeyValuePair(Of String, String))
         For Each KeyName In {"PCL", "PCL2", "PCLDebug"}
@@ -208,7 +291,7 @@ Public Module ModMinecraft
             Try
                 If Not DirectoryUtils.Exists(BasePath) Then Continue For
                 For Each Folder As DirectoryInfo In DirectoryUtils.GetInfo(BasePath).GetDirectories
-                    If DirectoryUtils.Exists(Folder.FullName & "versions\") Then
+                    If DirectoryUtils.Exists(Path.Combine(Folder.FullName, "versions")) Then
                         Result.Add(PathUtils.AddSlashSuffix(PathUtils.ForCompare(Folder.FullName)))
                     End If
                 Next
@@ -1109,7 +1192,7 @@ OnLoaded:
                 McInstanceSelected = Nothing
                 Logger.Info("未找到可用 Minecraft 版本")
             End If
-            If Settings.Get(Of Boolean)("SystemDebugDelay") Then Thread.Sleep(RandomInteger(200, 3000))
+            '版本列表完成后立即呈现，不继承旧调试延时。
         Catch ex As Exception
             If Loader.IsCanceled OrElse ex.IsCanceled Then Return '#5617
             WriteIni(PathMc & "MD.ini", "InstanceCache", "") '要求下次重新加载

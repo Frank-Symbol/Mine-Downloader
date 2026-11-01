@@ -18,10 +18,10 @@ $refs = Join-Path $env:USERPROFILE '.nuget\packages\microsoft.netframework.refer
 if (Test-Path $refs) { $common += "-p:TargetFrameworkRootPath=$refs" }
 Push-Location $root
 try {
-    # Build these first: the WPF Resources.resx embeds PCLCS/bin/*.dll.
-    & $msbuild 'PCLCS\PCLCS.csproj' -restore @common
+    # Build these first: the WPF Resources.resx embeds MDCS/bin/*.dll.
+    & $msbuild 'MDCS\PCLCS.csproj' -restore @common
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    & $msbuild 'Plain Craft Launcher 2\Plain Craft Launcher 2.vbproj' @common
+    & $msbuild 'Mine Downloader\Plain Craft Launcher 2.vbproj' @common
     exit $LASTEXITCODE
 } finally {
     Pop-Location

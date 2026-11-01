@@ -193,15 +193,15 @@ Friend Module ModSecret
             FrmMain.PanForm.Background.Freeze()
         End Sub)
     End Sub
-    '默认仅开放跳票红。关于页版本号右键 11 次可切换为全部开放。
+    '仅开放龙猫蓝；旧版解锁状态不再参与主题可用性判定。
     Friend Sub ThemeCheckAll(EffectSetup As Boolean)
         If Not ThemeCheckOne(Settings.Get(Of Integer)("UiLauncherTheme")) Then
-            Settings.Set("UiLauncherTheme", 10)
+            Settings.Set("UiLauncherTheme", 0)
         End If
         If EffectSetup AndAlso FrmSetupUI IsNot Nothing Then FrmSetupUI.RefreshThemeLock()
     End Sub
     Friend Function ThemeCheckOne(Id As Integer) As Boolean
-        Return Id = 10 OrElse Settings.Get(Of Boolean)("MdThemesUnlocked")
+        Return Id = 0
     End Function
     Friend Function ThemeUnlock(Id As Integer, Optional ShowDoubleHint As Boolean = True, Optional UnlockHint As String = Nothing) As Boolean
         Return ThemeCheckOne(Id)

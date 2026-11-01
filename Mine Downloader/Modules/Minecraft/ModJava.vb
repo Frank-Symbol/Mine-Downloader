@@ -1,4 +1,4 @@
-﻿Public Module ModJava
+Public Module ModJava
 
     ''' <summary>
     ''' 初始化 Java 列表。
@@ -55,9 +55,13 @@
 
     ''' <summary>
     ''' 更新 Java 列表显示。
-    ''' 精简版没有 Java 选择界面，列表仅用于内部按版本需求自动挑选 Java。
+    ''' 同步版本独立设置中的 Java 列表；不会启动游戏。
     ''' </summary>
     Public Sub UpdateJavaLists() Handles JavaListRefreshWorker.Started, JavaListRefreshWorker.Stopped
+        RunInUi(Sub()
+                    FrmInstanceSetup?.UpdateJavaList()
+                    PageInstanceLeft.ReloadCurrentJava()
+                End Sub)
     End Sub
 
     ''' <summary>
@@ -270,7 +274,20 @@
     Public Function SelectOrDownloadJava(Target As OneOf(Of ValueRange(Of Version), McInstance), TryFixOrHint As Boolean, Optional c As CancellationToken = Nothing, Optional p As ProgressProvider = Nothing) As Java
         Try
             Dim Instance As McInstance = If(Target.Is(Of McInstance), Target.As(Of McInstance), Nothing)
-            '精简版没有版本设置页，Java 一律按需求范围自动挑选
+            '仅解析版本设置并检查 Java，不启动游戏。
+            If Instance IsNot Nothing Then
+                Select Case Settings.Get(Of Integer)("VersionArgumentJavaV2", Instance)
+                    Case 2
+                        Return JavaUtils.SearchFoldersAsync(True, {Instance.PathVersion}, c, p?.SplitTo(1)).Run().FirstOrDefault()
+                    Case 3
+                        Dim ChosenJava = Configs.JavaForced.Get(Instance.Config)
+                        If ChosenJava Is Nothing Then Return Nothing
+                        If Not Configs.JavaList.Get().Contains(ChosenJava) Then Return Nothing
+                        If Not ChosenJava.CheckAsync(c).Run() Then Return Nothing
+                        p?.Finish()
+                        Return ChosenJava
+                End Select
+            End If
             If True Then
 
                     '获取范围

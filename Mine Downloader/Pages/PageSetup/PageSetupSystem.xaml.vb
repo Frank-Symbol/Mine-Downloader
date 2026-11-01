@@ -26,25 +26,6 @@ Public Class PageSetupSystem
         RefreshAbout()
     End Sub
 
-    Private ThemeUnlockClicks As Integer
-
-    Private Sub AboutVersion_RightClick(sender As Object, e As MouseButtonEventArgs) Handles LabAboutVersion.MouseRightButtonUp
-        e.Handled = True
-        If Settings.Get(Of Boolean)("MdThemesUnlocked") Then
-            Settings.Set("MdThemesUnlocked", False)
-            ThemeUnlockClicks = 0
-            ThemeCheckAll(True)
-            Hint("已恢复默认主题：跳票红", HintType.Green)
-            Return
-        End If
-        ThemeUnlockClicks += 1
-        If ThemeUnlockClicks < 11 Then Return
-        ThemeUnlockClicks = 0
-        Settings.Set("MdThemesUnlocked", True)
-        ThemeCheckAll(True)
-        Hint("所有主题已解锁，再次右键版本号恢复默认", HintType.Green)
-    End Sub
-
     '关于
     ''' <summary>
     ''' 刷新「关于」卡片中的版本与项目信息。
@@ -78,33 +59,19 @@ Public Class PageSetupSystem
         If LabFolderPath Is Nothing Then Return
         Try
             Dim IsCustom As Boolean = Not String.IsNullOrWhiteSpace(Settings.Get(Of String)("McFolder"))
-            LabFolderPath.Text = $"{McFolderSelected}（" & If(IsCustom, "已手动指定", "自动识别：与启动器同目录的 .minecraft 文件夹") & "）"
+            LabFolderPath.Text = $"{McFolderSelected}（" & If(IsCustom, "已选择文件夹预设", "自动跟随同目录 PCL 的选择，未识别时使用同目录 .minecraft") & "）"
             LabFolderPath.ToolTip = McFolderSelected
         Catch ex As Exception
             LabFolderPath.Text = "读取游戏文件夹失败"
         End Try
     End Sub
     Private Sub BtnFolderBrowse_Click(sender As Object, e As EventArgs) Handles BtnFolderBrowse.Click
-        Dim Target As String = Dialogs.SelectFolder("选择游戏文件夹（.minecraft）", False).FirstOrDefault()
-        If String.IsNullOrWhiteSpace(Target) Then Return
         Try
-            Target = PathUtils.AddSlashSuffix(PathUtils.ForCompare(Target))
-            If Not DirectoryUtils.Exists(Target) Then
-                Hint("所选文件夹不存在！", HintType.Red)
-                Return
-            End If
-            If Not CheckPermission(Target) Then
-                Hint($"没有对文件夹 {Target} 的写入权限，请换一个位置或以管理员身份运行！", HintType.Red)
-                Return
-            End If
-            Settings.Set("McFolder", Target)
-            McFolderSelected = Target
-            McFolderListLoader.Start(IsForceRestart:=True)
-            RefreshFolderPath()
-            Hint($"游戏文件夹已更改为：{Target}", HintType.Green)
-            Logger.Info($"用户手动更改了游戏文件夹：{Target}")
+            FrmMain.PageChange(FormMain.PageType.InstanceSelect)
         Catch ex As Exception
-            Logger.Error(ex, "更改游戏文件夹失败", LogBehavior.Alert)
+            Logger.Error(ex, "打开游戏文件夹选择窗口失败", LogBehavior.Alert)
+        Finally
+            RefreshFolderPath()
         End Try
     End Sub
     Private Sub BtnFolderOpen_Click(sender As Object, e As EventArgs) Handles BtnFolderOpen.Click
@@ -116,10 +83,13 @@ Public Class PageSetupSystem
         End Try
     End Sub
     Private Sub BtnFolderReset_Click(sender As Object, e As EventArgs) Handles BtnFolderReset.Click
-        Settings.Set("McFolder", "")
-        McFolderListLoader.Start(IsForceRestart:=True)
-        RefreshFolderPath()
-        Hint("已恢复为自动识别的游戏文件夹", HintType.Green)
+        Try
+            McFolderFollowPcl()
+            RefreshFolderPath()
+            Hint("已恢复自动跟随 PCL 的游戏文件夹", HintType.Green)
+        Catch ex As Exception
+            Logger.Error(ex, "恢复自动跟随游戏文件夹失败", LogBehavior.Alert)
+        End Try
     End Sub
     Public Sub Reset()
         Try

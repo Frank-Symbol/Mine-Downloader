@@ -28,12 +28,12 @@ Mine Downloader 保留 Minecraft 下载、安装和资源浏览流程，在应�
 powershell -ExecutionPolicy Bypass -File .\build.ps1 -Configuration Debug
 ```
 
-脚本先恢复和构建 MeloongCore、PCLCS 实际源码，再串行构建 VB WPF 主项目，并关闭共享编译。默认使用 `bin\` 输出是为了匹配主项目资源文件中的 `PCLCS\bin\` 嵌入依赖路径。产物为 `Plain Craft Launcher 2\bin\Mine Downloader.exe` 及配套文件。构建无需签名私钥。
+脚本先恢复和构建 MeloongCore、MDCS（PCLCS 项目）实际源码，再串行构建 VB WPF 主项目，并关闭共享编译。默认使用 `bin\` 输出是为了匹配主项目资源文件中的 `MDCS\bin\` 嵌入依赖路径。产物为 `Mine Downloader\bin\Mine Downloader.exe` 及配套文件。构建无需签名私钥。
 
 ### 源码结构
 
-- `Plain Craft Launcher 2/`：VB WPF 主项目、图片与构建必需的第三方资源库。
-- `PCLCS/`：下载、版本、Java 和资源辅助代码。
+- `Mine Downloader/`：VB WPF 主项目、图片与构建必需的第三方资源库。
+- `MDCS/`：下载、版本、Java 和资源辅助代码。
 - `MeloongCore/Shared/`、`MeloongCore/Wpf/`：实际依赖源码，而非 submodule 指针。
 - `Plain Craft Launcher 2.sln`、`build.ps1`：解决方案与可重复执行的构建入口。
 

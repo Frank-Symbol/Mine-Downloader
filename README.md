@@ -28,12 +28,12 @@ Install Visual Studio 2022 / Build Tools with the **.NET desktop build tools**, 
 powershell -ExecutionPolicy Bypass -File .\build.ps1 -Configuration Debug
 ```
 
-The script restores and builds the actual MeloongCore and PCLCS sources first, then builds the VB WPF application serially with shared compilation disabled. Default `bin\` output is intentional: the application resource file embeds dependencies from `PCLCS\bin\`. The result is `Plain Craft Launcher 2\bin\Mine Downloader.exe` and its companion files. No signing key is required.
+The script restores and builds the actual MeloongCore and MDCS (PCLCS project) sources first, then builds the VB WPF application serially with shared compilation disabled. Default `bin\` output is intentional: the application resource file embeds dependencies from `MDCS\bin\`. The result is `Mine Downloader\bin\Mine Downloader.exe` and its companion files. No signing key is required.
 
 ### Source layout
 
-- `Plain Craft Launcher 2/`: VB WPF application, images, and required third-party resource libraries.
-- `PCLCS/`: C# download, version, Java, and resource helpers.
+- `Mine Downloader/`: VB WPF application, images, and required third-party resource libraries.
+- `MDCS/`: C# download, version, Java, and resource helpers.
 - `MeloongCore/Shared/` and `MeloongCore/Wpf/`: actual dependency sources, not a submodule pointer.
 - `Plain Craft Launcher 2.sln`, `build.ps1`: solution and repeatable build entry point.
 

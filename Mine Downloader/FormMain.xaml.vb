@@ -1099,6 +1099,8 @@ Public Class FormMain
         ''' 设置。
         ''' </summary>
         Setup = 3
+        InstanceSelect = 5
+        InstanceSetup = 7
         ''' <summary>
         ''' 任务管理。这是一个副页面。
         ''' </summary>
@@ -1136,6 +1138,10 @@ Public Class FormMain
         Select Case Stack.Page
             Case PageType.Setup
                 Return "设置"
+            Case PageType.InstanceSetup
+                Return "版本设置 - " & PageInstanceLeft.Instance.Name
+            Case PageType.InstanceSelect
+                Return "实例选择"
             Case PageType.TaskManager
                 Return "任务管理"
             Case PageType.ResourceDetail
@@ -1328,6 +1334,14 @@ Public Class FormMain
                 Case PageType.Setup '设置
                     If FrmSetupLeft Is Nothing Then FrmSetupLeft = New PageSetupLeft
                     PageChangeAnim(FrmSetupLeft, FrmSetupLeft.PageGet(SubType))
+                Case PageType.InstanceSelect '原版实例选择
+                    McFolderRefreshChoices(False)
+                    If FrmSelectLeft Is Nothing Then FrmSelectLeft = New PageSelectLeft
+                    If FrmSelectRight Is Nothing Then FrmSelectRight = New PageSelectRight
+                    PageChangeAnim(FrmSelectLeft, FrmSelectRight)
+                Case PageType.InstanceSetup
+                    If FrmInstanceLeft Is Nothing Then FrmInstanceLeft = New PageInstanceLeft
+                    PageChangeAnim(FrmInstanceLeft, FrmInstanceLeft.PageGet(SubType))
                 Case PageType.TaskManager '任务管理
                     If FrmSpeedLeft Is Nothing Then FrmSpeedLeft = New PageSpeedLeft
                     If FrmSpeedRight Is Nothing Then FrmSpeedRight = New PageSpeedRight

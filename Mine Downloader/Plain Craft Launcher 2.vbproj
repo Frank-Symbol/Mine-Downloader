@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -290,6 +290,16 @@
       <DependentUpon>PageSetupLeft.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\PageSetup\Settings.vb" />
+    <Compile Include="Pages\PageInstance\PageInstanceLeft.xaml.vb"><DependentUpon>PageInstanceLeft.xaml</DependentUpon></Compile>
+    <Compile Include="Pages\PageInstance\PageInstanceOverall.xaml.vb"><DependentUpon>PageInstanceOverall.xaml</DependentUpon></Compile>
+    <Compile Include="Pages\PageInstance\PageInstanceSetup.xaml.vb"><DependentUpon>PageInstanceSetup.xaml</DependentUpon></Compile>
+    <Page Include="Pages\PageInstance\PageInstanceLeft.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
+    <Page Include="Pages\PageInstance\PageInstanceOverall.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
+    <Page Include="Pages\PageInstance\PageInstanceSetup.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
+    <Compile Include="Pages\PageSelectLeft.xaml.vb"><DependentUpon>PageSelectLeft.xaml</DependentUpon></Compile>
+    <Compile Include="Pages\PageSelectRight.xaml.vb"><DependentUpon>PageSelectRight.xaml</DependentUpon></Compile>
+    <Page Include="Pages\PageSelectLeft.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
+    <Page Include="Pages\PageSelectRight.xaml"><Generator>MSBuild:Compile</Generator><SubType>Designer</SubType></Page>
     <Compile Include="Pages\PageSetup\PageSetupSystem.xaml.vb">
       <DependentUpon>PageSetupSystem.xaml</DependentUpon>
     </Compile>
@@ -720,26 +730,26 @@
       <Project>{2dffe2a0-1101-816b-d240-f644b2d74a68}</Project>
       <Name>MeloongCore.Wpf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PCLCS\PCLCS.csproj">
+    <ProjectReference Include="..\MDCS\PCLCS.csproj">
       <Project>{32de4aaf-f4d6-42c5-9604-19236de96c69}</Project>
       <Name>PCLCS</Name>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\PCLCS\bin\PCLCS.dll">
+    <None Include="..\MDCS\bin\PCLCS.dll">
       <LogicalName>PCLCS.dll</LogicalName>
       <Link>Resources\PCLCS.dll</Link>
     </None>
-    <None Include="..\PCLCS\bin\MeloongCore.dll">
+    <None Include="..\MDCS\bin\MeloongCore.dll">
       <LogicalName>MeloongCore.dll</LogicalName>
       <Link>Resources\MeloongCore.dll</Link>
     </None>
-    <None Include="..\PCLCS\bin\MeloongCore.Wpf.dll">
+    <None Include="..\MDCS\bin\MeloongCore.Wpf.dll">
       <LogicalName>MeloongCore.Wpf.dll</LogicalName>
       <Link>Resources\MeloongCore.Wpf.dll</Link>
     </None>
-    <None Include="..\PCLCS\bin\Microsoft.Win32.Registry.dll">
+    <None Include="..\MDCS\bin\Microsoft.Win32.Registry.dll">
       <LogicalName>Microsoft.Win32.Registry.dll</LogicalName>
       <Link>Resources\Microsoft.Win32.Registry.dll</Link>
     </None>
