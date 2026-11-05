@@ -149,7 +149,7 @@ Public Class Settings
         New Setting("UiCustomPreset", 0),
         New Setting("UiCustomNet", ""),
         New Setting("UiLogoType", 1, OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
-        New Setting("UiLogoText", "MD", OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
+        New Setting("UiLogoText", ProductName, OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
         New Setting("UiLogoLeft", False, OnChanged:=AddressOf FormMain.UpdateBackgroundAndTitleBar),
         New Setting("UiMusicVolume", 500),
         New Setting("UiMusicStop", False),

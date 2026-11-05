@@ -16,7 +16,7 @@
                     <local:MyCard Grid.Row="0" Margin="0,15,0,0" x:Name="CardHero">
                         <StackPanel Margin="25,20,25,18">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="LabHeroTitle" FontSize="24" FontWeight="SemiBold" Text="MD下载器" />
+                                <TextBlock x:Name="LabHeroTitle" FontSize="24" FontWeight="SemiBold" Text="PCL Mine Downloader" />
                                 <TextBlock x:Name="LabHeroVersion" FontSize="12" Margin="12,12,0,0" Opacity="0.45" VerticalAlignment="Bottom" />
                             </StackPanel>
                             <TextBlock x:Name="LabHeroDesc" FontSize="12.5" Margin="0,7,0,0" Opacity="0.6" TextWrapping="Wrap"

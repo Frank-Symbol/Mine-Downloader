@@ -1,4 +1,4 @@
-Imports System.Reflection
+﻿Imports System.Reflection
 Imports System.Windows.Threading
 
 Public Class Application
@@ -63,28 +63,37 @@ Public Class Application
                 DirectoryUtils.Create(Paths.Base & "MD\Musics\")
                 CheckPermissionWithException(Paths.Base & "MD\")
             Catch ex As Exception
-                MsgBox($"PCL 没有对当前文件夹的权限（{Paths.Base}MD\），请尝试：" & vbCrLf &
-                  "1. 将 PCL 移动到其他文件夹" & If(PathUtils.GetDiskName(Paths.Base) = "C"c, "，例如 C 盘和桌面以外的其他位置。", "。") & vbCrLf &
+                MsgBox($"{ProductName} 没有对当前文件夹的权限（{Paths.Base}MD\），请尝试：" & vbCrLf &
+                  $"1. 将 {ProductName} 移动到其他文件夹" & If(PathUtils.GetDiskName(Paths.Base) = "C"c, "，例如 C 盘和桌面以外的其他位置。", "。") & vbCrLf &
                   "2. 删除当前目录中的 MD 文件夹，然后再试。" & vbCrLf &
-                  "3. 右键 PCL 选择属性，打开 兼容性 中的 以管理员身份运行此程序。",
+                  $"3. 右键 {ProductName} 选择属性，打开 兼容性 中的 以管理员身份运行此程序。",
                 MsgBoxStyle.Critical, "运行环境错误")
                 Environment.[Exit](ProcessReturnValues.Cancel)
             End Try
-RetryCacheCheck:
-            Try
-                DirectoryUtils.Create(PathTemp)
-                CheckPermissionWithException(PathTemp)
-            Catch ex As Exception
-                If PathUtils.IsSame(PathTemp, Path.GetTempPath() & "MD\") Then
-                    MyMsgBox("PCL 无法访问缓存文件夹，可能导致程序出错或无法正常使用！" & vbCrLf & vbCrLf & "错误原因：" & ex.GetDisplay(True), "缓存文件夹不可用")
-                Else
-                    MyMsgBox("手动设置的缓存文件夹不可用，PCL 将使用默认缓存文件夹。" & vbCrLf & vbCrLf & "错误原因：" & ex.GetDisplay(True), "缓存文件夹不可用")
-                    Settings.Set("SystemSystemCache", "")
-                    PathTemp = Path.GetTempPath() & "MD\"
-                    GoTo RetryCacheCheck
-                End If
-            End Try
-            DirectoryUtils.Create(PathTemp & "Cache\")
+            '同时验证缓存根目录和实际 Cache 子目录；默认缓存不可写时回退到程序自有数据目录。
+            Dim RequestedCache As String = PathTemp
+            Dim CacheReady As Boolean = False
+            Dim CacheErrors As New List(Of Exception)
+            Dim DefaultCache As String = Path.GetTempPath() & "MD\"
+            Dim LocalCache As String = Paths.Base & "MD\CacheTemp\"
+            For Each Candidate As String In New String() {RequestedCache, DefaultCache, LocalCache}.Distinct(StringComparer.OrdinalIgnoreCase)
+                Try
+                    DirectoryUtils.Create(Candidate)
+                    CheckPermissionWithException(Candidate)
+                    DirectoryUtils.Create(Candidate & "Cache\")
+                    CheckPermissionWithException(Candidate & "Cache\")
+                    PathTemp = Candidate
+                    CacheReady = True
+                    If Not PathUtils.IsSame(Candidate, RequestedCache) Then
+                        Logger.Warn($"缓存目录不可用，已回退到：{Candidate}")
+                    End If
+                    Exit For
+                Catch CacheError As Exception
+                    CacheErrors.Add(CacheError)
+                    Logger.Warn(CacheError, $"缓存目录不可用：{Candidate}")
+                End Try
+            Next
+            If Not CacheReady Then Throw New AggregateException("无法创建可写缓存目录，请将程序移动到可写文件夹后重试。", CacheErrors)
             DirectoryUtils.Create(Paths.AppDataThenName)
             '设置 ToolTipService 默认值
             ToolTipService.InitialShowDelayProperty.OverrideMetadata(GetType(DependencyObject), New FrameworkPropertyMetadata(100))
@@ -114,11 +123,11 @@ RetryCacheCheck:
             Logger.Info($"管理员权限：{WindowsUtils.HasAdminRole()}")
             '检测异常环境
             If Paths.Base.Contains(Path.GetTempPath()) OrElse Paths.Base.Contains("AppData\Local\Temp\") Then
-                MyMsgBox("请将 PCL 从压缩包中解压后再使用！" & vbCrLf & "如果不会解压，可以在网上寻找教程。", "需要解压！", "我知道了", IsWarn:=True, ForceWait:=True)
+                MyMsgBox($"请将 {ProductName} 从压缩包中解压后再使用！" & vbCrLf & "如果不会解压，可以在网上寻找教程。", "需要解压！", "我知道了", IsWarn:=True, ForceWait:=True)
                 FormMain.EndProgramForce(ProcessReturnValues.Cancel)
             End If
             If Not Environment.Is64BitOperatingSystem Then
-                MyMsgBox("PCL 和新版 Minecraft 均不再支持 32 位系统，请重装为 64 位系统后再进行游戏！", "环境警告", "我知道了", IsWarn:=True, ForceWait:=True)
+                MyMsgBox($"{ProductName} 和新版 Minecraft 均不再支持 32 位系统，请重装为 64 位系统后再使用！", "环境警告", "我知道了", IsWarn:=True, ForceWait:=True)
                 FormMain.EndProgramForce(ProcessReturnValues.Cancel)
             End If
             '计时
@@ -131,7 +140,7 @@ RetryCacheCheck:
                 FilePath = PathExe
             Catch
             End Try
-            MsgBox(ex.GetDisplay(True) & vbCrLf & "PCL 所在路径：" & If(String.IsNullOrEmpty(FilePath), "获取失败", FilePath), MsgBoxStyle.Critical, "PCL 初始化错误")
+            MsgBox(ex.GetDisplay(True) & vbCrLf & ProductName & " 所在路径：" & If(String.IsNullOrEmpty(FilePath), "获取失败", FilePath), MsgBoxStyle.Critical, ProductName & " 初始化错误")
             FormMain.EndProgramForce(ProcessReturnValues.Exception)
         End Try
     End Sub
@@ -193,7 +202,9 @@ RetryCacheCheck:
     ''' 查找已有实例的主窗口句柄（先按标题，再按进程名兜底）。
     ''' </summary>
     Private Shared Function FindLiteWindow() As IntPtr
-        Dim Hwnd As IntPtr = FindWindow(Nothing, "Mine Downloader")
+        Dim Hwnd As IntPtr = FindWindow(Nothing, ProductName)
+        If Hwnd = IntPtr.Zero Then Hwnd = FindWindow(Nothing, ProductName & " ")
+        If Hwnd = IntPtr.Zero Then Hwnd = FindWindow(Nothing, "Mine Downloader")
         If Hwnd = IntPtr.Zero Then Hwnd = FindWindow(Nothing, "Mine Downloader ")
         If Hwnd <> IntPtr.Zero Then Return Hwnd
         Try

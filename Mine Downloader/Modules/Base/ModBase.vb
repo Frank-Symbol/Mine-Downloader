@@ -6,7 +6,8 @@ Public Module ModBase
 #Region "声明"
 
     '下列版本信息由更新器自动修改
-    Public Const VersionBaseName As String = "1.0.0.2" '显示用版本名
+    Public Const ProductName As String = "PCL Mine Downloader"
+    Public Const VersionBaseName As String = "1.0.0.3" '显示用版本名
     Public Const CommitHash As String = "" 'Commit Hash，由 GitHub Workflow 自动替换
 #If RELEASE Then
     Public Const VersionCode As Integer = 3 '正式版
@@ -43,7 +44,7 @@ Public Module ModBase
     ''' <summary>
     ''' 程序内嵌图片文件夹路径，以 / 结尾。
     ''' </summary>
-    Public PathImage As String = "pack://application:,,,/Mine Downloader;component/Images/"
+    Public PathImage As String = "pack://application:,,,/PCL Mine Downloader;component/Images/"
     ''' <summary>
     ''' 程序的缓存文件夹路径，以 \ 结尾。
     ''' </summary>

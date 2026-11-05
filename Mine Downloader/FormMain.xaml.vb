@@ -765,7 +765,7 @@ Public Class FormMain
                     Brush.AlignmentY = AlignmentY.Bottom
             End Select
         End If
-        '标题栏显示类型：0 无、1 默认(MD 图标)、2 文本、3 图片
+        '标题栏显示类型：0 无、1 默认(产品名称)、2 文本、3 图片
         Select Case Settings.Get(Of Integer)("UiLogoType")
             Case 3 '图片：MD 优先；兼容只读旧 PCL 自定义图片。
                 Dim CustomLogoPath = Paths.Base & "MD\Logo.png"
@@ -808,7 +808,7 @@ Public Class FormMain
                 ShapeTitleLogo.Visibility = Visibility.Collapsed
                 LabTitleLogo.Visibility = Visibility.Visible
                 ImageTitleLogo.Visibility = Visibility.Collapsed
-                LabTitleLogo.Text = "Mine Downloader"
+                LabTitleLogo.Text = ProductName
                 If Not IsNothing(FrmSetupUI) Then
                     FrmSetupUI.CheckLogoLeft.Visibility = Visibility.Collapsed
                     FrmSetupUI.PanLogoText.Visibility = Visibility.Collapsed
@@ -836,8 +836,8 @@ Public Class FormMain
         FrmSetupUI?.CardLogo.TriggerForceResize()
         '标题栏文本：固定软件名
         Dim LogoText As String = Settings.Get(Of String)("UiLogoText")
-        If String.IsNullOrWhiteSpace(LogoText) Then LogoText = "MD" '默认显示软件名
-        LabTitleLogo.Text = If(Settings.Get(Of Integer)("UiLogoType") = 1, "Mine Downloader", LogoText)
+        If String.IsNullOrWhiteSpace(LogoText) Then LogoText = ProductName '默认显示软件名
+        LabTitleLogo.Text = If(Settings.Get(Of Integer)("UiLogoType") = 1, ProductName, LogoText)
         '标题栏文本是否居左
         PanTitleMain.ColumnDefinitions(0).Width = New GridLength(If(Settings.Get(Of Boolean)("UiLogoLeft") AndAlso Settings.Get(Of Integer)("UiLogoType") = 0, 0, 1), GridUnitType.Star)
     End Sub

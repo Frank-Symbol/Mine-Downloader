@@ -12,8 +12,8 @@
         McDownloadForgeRecommendedRefresh()
         '主页式欢迎区
         Try
-            LabHeroTitle.Text = "MD下载器"
-            LabHeroVersion.Text = "为minecraft服务"
+            LabHeroTitle.Text = ProductName
+            LabHeroVersion.Text = "为 Minecraft 服务"
             If Not RestrictMcDownload Then
                 LabHeroDesc.Text = "在这里下载游戏版本、模组加载器与社区资源，安装完成后即可用 PCL 本体启动游戏。"
             Else

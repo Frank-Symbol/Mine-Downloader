@@ -1,8 +1,8 @@
-; Mine Downloader 安装包脚本 (Inno Setup 6)
+; PCL Mine Downloader 安装包脚本 (Inno Setup 6)
 ; 用法: ISCC.exe installer\MineDownloader.iss   （先运行 build.ps1 -Configuration Release）
 
-#define AppName "Mine Downloader"
-#define AppExe "Mine Downloader.exe"
+#define AppName "PCL Mine Downloader"
+#define AppExe "PCL Mine Downloader.exe"
 #define BinDir "..\Mine Downloader\bin"
 #define AppVersion GetVersionNumbersString(BinDir + "\" + AppExe)
 
@@ -24,7 +24,7 @@ DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\{#AppExe}
 SetupIconFile=..\Mine Downloader\Images\icon.ico
 OutputDir=..\交付
-OutputBaseFilename=Mine-Downloader-v{#AppVersion}-setup
+OutputBaseFilename=PCL-Mine-Downloader-v{#AppVersion}-setup
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern

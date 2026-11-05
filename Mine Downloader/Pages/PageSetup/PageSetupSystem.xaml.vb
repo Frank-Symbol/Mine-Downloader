@@ -33,7 +33,7 @@ Public Class PageSetupSystem
     Private Sub RefreshAbout()
         If LabAboutName Is Nothing Then Return
         Try
-            LabAboutName.Text = "Mine Downloader"
+            LabAboutName.Text = ProductName
             LabAboutVersion.Text = VersionDisplay
             LabAboutUpstream.Text = "Plain Craft Launcher（Meloong-Git/PCL）"
         Catch ex As Exception

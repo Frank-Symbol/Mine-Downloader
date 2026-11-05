@@ -127,9 +127,10 @@ Public Module ModLanguage
         Add("下载", "下載", "Download", "ダウンロード")
 
         '下载页欢迎区
-        Add("PCL 下载器", "Mine Downloader", "Mine Downloader", "Mine Downloader")
-        Add("MD下载器", "MD下載器", "MD Downloader", "MD ダウンローダー")
-        Add("为 minecraft 服务", "為 minecraft 服務", "For Minecraft", "Minecraft のために")
+        Add("PCL 下载器", ProductName, ProductName, ProductName)
+        Add("MD下载器", ProductName, ProductName, ProductName)
+        Add(ProductName, ProductName, ProductName, ProductName)
+        Add("为 Minecraft 服务", "為 Minecraft 服務", "For Minecraft", "Minecraft のために")
         Add("在这里下载游戏版本、模组加载器与社区资源，安装完成后即可用 PCL 本体启动游戏。", "在這裡下載遊戲版本、模組載入器與社群資源，安裝完成後即可用 PCL 本體啟動遊戲。", "Download game versions, mod loaders and community resources here, then launch the installed game with PCL.", "ここからゲームバージョン、MODローダー、コミュニティリソースをダウンロードし、インストール後に PCL 本体でゲームを起動できます。")
         Add("快照版", "快照版", "Snapshot", "スナップショット")
         Add("下载游戏版本", "下載遊戲版本", "Download game", "ゲームをダウンロード")
@@ -474,7 +475,7 @@ Public Module ModLanguage
     Private Sub LanguageRefreshTitle()
         Try
             If FrmMain Is Nothing Then Return
-            If FrmMain.LabTitleLogo IsNot Nothing Then FrmMain.LabTitleLogo.Text = "Mine Downloader"
+            If FrmMain.LabTitleLogo IsNot Nothing AndAlso Settings.Get(Of Integer)("UiLogoType") = 1 Then FrmMain.LabTitleLogo.Text = ProductName
         Catch ex As Exception
         End Try
         Try
